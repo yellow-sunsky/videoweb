@@ -1,10 +1,7 @@
-# 增加了一些sql表接口，主要是原项目作者 刻意删除（不一定全对，可以跑起来）
-https://github.com/yuanmouren1hao/videoproject/blob/master/some.sql
+# 一个视频直播点播平台
 
 
-### 项目名称
 
-基于python的视频点播网站开发
 
 ### 项目介绍
 
