@@ -59,7 +59,7 @@
                     <div class="label">今日新增</div>
                 </div>
             </div>
-            <button class="negative ui button">开始爬取</button>
+            <button class="negative ui button" id="start-crawling">开始爬取</button>
             <div class="ui hidden divider"></div>
             <div class="ui hidden divider"></div>
             <div class="ui hidden divider"></div>
@@ -83,3 +83,25 @@
 
 {% endblock content %}
 
+{% block javascript %}
+<script>
+    $(document).ready(function() {
+        $('#start-crawling').click(function() {
+            $.ajax({
+                url: '/crawler/start_crawling/',
+                type: 'GET',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function(error) {
+                    alert('Error: 网络请求失败');
+                }
+            });
+        });
+    });
+</script>
+{% endblock javascript %}

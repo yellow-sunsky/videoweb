@@ -29,7 +29,7 @@
             <div class="content">
                 <a class="header" href="{% url 'video:detail' item.pk %}">{{ item.title }}</a>
                 <div class="meta">
-                    <span class="date">发布于{{ item.create_time|time_since}}</span>
+                    <span class="date">更新于{{ item.create_time|time_since}}</span>
                 </div>
                 <div class="description">
                     {{ item.view_count}}次观看
