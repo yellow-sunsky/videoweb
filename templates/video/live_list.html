@@ -1,0 +1,68 @@
+<script src="/static/js/Hls.js"></script>
+{% extends 'base/base.html' %}
+{% load static %}
+{% load thumbnail %}
+
+<body>
+
+    {% block content %}
+        {% include "base/page_nav.html" %}
+
+        <!-- 播放器容器 -->
+        <div id="video-player-container">
+            <video id="video-player" class="detail-video-player" controls style="width: 60%; height: auto;"></video>
+        </div>
+
+        <h1>直播列表</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>标题</th>
+                    <th>链接</th>
+                    <th>封面</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for live in live_data %}
+                <tr>
+                    <td>{{ live.id }}</td>
+                    <td>{{ live.title }}</td>
+                    <td><a href="{{ live.link }}" target="_blank">{{ live.link }}</a></td>
+                    <td><img src="{{ live.cover }}" alt="{{ live.title }}" width="100"></td>
+                    <td><button class="play-button" data-link="{{ live.link }}">播放</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endblock content %}
+
+    {% block javascript %}
+    <script type="text/javascript">
+        // 获取所有播放按钮和视频播放器
+        const playButtons = document.querySelectorAll('.play-button');
+        const videoPlayer = document.getElementById('video-player');
+
+        // 为每个播放按钮添加点击事件
+        playButtons.forEach((button) => {
+            button.addEventListener('click', function () {
+                const videoLink = this.dataset.link;
+
+                if (typeof Hls!== 'undefined' && Hls.isSupported() && videoLink.endsWith('.m3u8')) {
+                    const hls = new Hls();
+                    hls.loadSource(videoLink);
+                    hls.attachMedia(videoPlayer);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                        videoPlayer.play();
+                    });
+                } else if (videoLink.endsWith('.mp4')) {
+                    videoPlayer.src = videoLink;
+                    videoPlayer.type = 'video/mp4';
+                    videoPlayer.play();
+                }
+            });
+        });
+    </script>
+    {% endblock javascript %}
+</body>

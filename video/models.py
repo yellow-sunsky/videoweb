@@ -4,6 +4,21 @@ from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
 
+from django.db import models
+
+class VLive(models.Model):
+    title = models.CharField(max_length=200, verbose_name='标题')
+    link = models.URLField(verbose_name='链接')
+    cover = models.URLField(verbose_name='封面')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        db_table = 'v_live'
+        verbose_name = '直播信息'
+        verbose_name_plural = '直播信息列表'
+
 
 class VideoQuerySet(models.query.QuerySet):
 

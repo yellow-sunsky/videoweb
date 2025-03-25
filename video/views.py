@@ -8,6 +8,15 @@ from .forms import CommentForm
 from .models import Video, Classification
 
 
+from django.views.generic import ListView
+from.models import VLive
+
+class LiveListView(ListView):
+    model = VLive
+    template_name = 'video/live_list.html'  # 修改模板路径
+    context_object_name = 'live_data'
+
+
 class IndexView(generic.ListView):
     model = Video
     template_name = 'video/index.html'

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>直播列表</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>直播列表</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>标题</th>
+                <th>链接</th>
+                <th>封面</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for live in live_data %}
+            <tr>
+                <td>{{ live.id }}</td>
+                <td>{{ live.title }}</td>
+                <td><a href="{{ live.link }}" target="_blank">{{ live.link }}</a></td>
+                <td><img src="{{ live.cover }}" alt="{{ live.title }}" width="100"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
