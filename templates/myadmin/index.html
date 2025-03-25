@@ -59,7 +59,23 @@
                     <div class="label">今日新增</div>
                 </div>
             </div>
+
+            <!-- 添加下拉框 -->
+            <div class="ui selection dropdown">
+                <input type="hidden" name="selected_url">
+                <i class="dropdown icon"></i>
+                <div class="default text">选择要爬取的栏目</div>
+                <div class="menu">
+                    <div class="item" data-value="https://www1.gdtv.cn/tvColumn/687" data-id="1">广东新闻联播</div>
+                    <div class="item" data-value="https://www1.gdtv.cn/tvColumn/770" data-id="3">今日一线</div>
+                    <div class="item" data-value="https://www.gztv.com/?0fh09c=076412#/video" data-id="4">广州新闻</div>
+                    <div class="item" data-value="https://www.sztv.com.cn/dianbo_list.shtml?pid=7867&id=7901" data-id="5">深视新闻</div>
+                    <div class="item" data-value="https://www.sztv.com.cn/dianbo_list.shtml?pid=7867&id=7900" data-id="6">直播港澳台</div>
+                </div>
+            </div>
+
             <button class="negative ui button" id="start-crawling">开始爬取</button>
+
             <div class="ui hidden divider"></div>
             <div class="ui hidden divider"></div>
             <div class="ui hidden divider"></div>
@@ -86,21 +102,34 @@
 {% block javascript %}
 <script>
     $(document).ready(function() {
+        // 初始化下拉框
+        $('.ui.dropdown').dropdown();
+
         $('#start-crawling').click(function() {
-            $.ajax({
-                url: '/crawler/start_crawling/',
-                type: 'GET',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        alert(response.message);
-                    } else {
-                        alert('Error: ' + response.message);
+            // 获取用户选择的 URL 和 classification_id
+            var selectedItem = $('.ui.dropdown').dropdown('get item');
+            var selectedUrl = selectedItem.data('value');
+            var classificationId = selectedItem.data('id');
+
+            if (selectedUrl && classificationId) {
+                $.ajax({
+                    url: '/crawler/start_crawling/',
+                    type: 'GET',
+                    data: { url: selectedUrl, classification_id: classificationId },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            alert(response.message);
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function(error) {
+                        alert('Error: 网络请求失败');
                     }
-                },
-                error: function(error) {
-                    alert('Error: 网络请求失败');
-                }
-            });
+                });
+            } else {
+                alert('请选择要爬取的栏目');
+            }
         });
     });
 </script>
