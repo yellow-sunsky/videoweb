@@ -1,16 +1,25 @@
 <script src="/static/js/Hls.js"></script>
+<script src="/static/js/flv.min.js"></script> <!-- 引入 flv.js 库 -->
 {% extends 'base/base.html' %}
 {% load static %}
 {% load thumbnail %}
 
 <body>
-
     {% block content %}
         {% include "base/page_nav.html" %}
 
         <!-- 播放器容器 -->
         <div id="video-player-container">
             <video id="video-player" class="detail-video-player" controls style="width: 60%; height: auto;"></video>
+        </div>
+
+        <!-- 新增：直播标题标签区域 -->
+        <div id="live-title-labels">
+            {% for live in live_data %}
+            <div class="ui huge label play-label" data-link="{{ live.link }}">
+                {{ live.title }}
+            </div>
+            {% endfor %}
         </div>
 
         <h1>直播列表</h1>
@@ -42,27 +51,55 @@
     <script type="text/javascript">
         // 获取所有播放按钮和视频播放器
         const playButtons = document.querySelectorAll('.play-button');
+        // 新增：获取所有直播标题标签
+        const playLabels = document.querySelectorAll('.play-label');
         const videoPlayer = document.getElementById('video-player');
+        let flvPlayer = null;
 
         // 为每个播放按钮添加点击事件
         playButtons.forEach((button) => {
             button.addEventListener('click', function () {
                 const videoLink = this.dataset.link;
-
-                if (typeof Hls!== 'undefined' && Hls.isSupported() && videoLink.endsWith('.m3u8')) {
-                    const hls = new Hls();
-                    hls.loadSource(videoLink);
-                    hls.attachMedia(videoPlayer);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                        videoPlayer.play();
-                    });
-                } else if (videoLink.endsWith('.mp4')) {
-                    videoPlayer.src = videoLink;
-                    videoPlayer.type = 'video/mp4';
-                    videoPlayer.play();
-                }
+                playVideo(videoLink);
             });
         });
+
+        // 新增：为每个直播标题标签添加点击事件
+        playLabels.forEach((label) => {
+            label.addEventListener('click', function () {
+                const videoLink = this.dataset.link;
+                playVideo(videoLink);
+            });
+        });
+
+        // 封装播放视频的函数
+        function playVideo(videoLink) {
+            if (flvPlayer) {
+                flvPlayer.destroy();
+                flvPlayer = null;
+            }
+
+            if (typeof Hls!== 'undefined' && Hls.isSupported() && videoLink.endsWith('.m3u8')) {
+                const hls = new Hls();
+                hls.loadSource(videoLink);
+                hls.attachMedia(videoPlayer);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    videoPlayer.play();
+                });
+            } else if (videoLink.endsWith('.mp4')) {
+                videoPlayer.src = videoLink;
+                videoPlayer.type = 'video/mp4';
+                videoPlayer.play();
+            } else if (typeof flvjs!== 'undefined' && flvjs.isSupported() && videoLink.endsWith('.flv')) {
+                flvPlayer = flvjs.createPlayer({
+                    type: 'flv',
+                    url: videoLink
+                });
+                flvPlayer.attachMediaElement(videoPlayer);
+                flvPlayer.load();
+                flvPlayer.play();
+            }
+        }
     </script>
     {% endblock javascript %}
 </body>
